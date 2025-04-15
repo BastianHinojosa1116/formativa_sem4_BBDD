@@ -1,9 +1,15 @@
 // Indica que esta clase pertenece al paquete model (donde se encuentran las clases que representan objetos o entidades)
 package com.example.microservicio_peliculas.model;
 
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Max;
 // -------------------- IMPORTACIONES -------------------------
 
 // Librería de Lombok que genera automáticamente los métodos getters y setters
@@ -30,24 +36,35 @@ import lombok.NoArgsConstructor;
 @Table(name = "peliculas") // 🔵 Mapeamos a la tabla "peliculas"
 public class Pelicula {
 
-    // Identificador único de la película
-    @Id // 🔵 Indicamos que esta es la Primary Key
-    private Long id;
-
-    // Título de la película
-    private String titulo;
-
-    // Año de estreno de la película
-    private int annio;
-
-    // Director de la película
-    private String director;
-
-    // Género de la película (Ejemplo: Acción, Drama, Ciencia Ficción)
-    private String genero;
-
-    // Sinopsis o descripción corta de la película
-    private String sinopsis;
+     // Identificador único de la película
+     @Id
+     @NotNull(message = "El ID no puede ser nulo")
+     private Long id;
+ 
+     // Título de la película
+     @NotBlank(message = "El título no puede estar vacío")
+     @Size(max = 100, message = "El título no debe tener más de 100 caracteres")
+     private String titulo;
+ 
+     // Año de estreno de la película
+     @Min(value = 1888, message = "El año debe ser mayor o igual a 1888") 
+     @Max(value = 2100, message = "El año debe ser menor o igual a 2100")
+     private int annio;
+ 
+     // Director de la película
+     @NotBlank(message = "El nombre del director no puede estar vacío")
+     @Size(max = 60, message = "El nombre del director no debe tener más de 60 caracteres")
+     private String director;
+ 
+     // Género de la película
+     @NotBlank(message = "El género no puede estar vacío")
+     @Size(max = 30, message = "El género no debe tener más de 30 caracteres")
+     private String genero;
+ 
+     // Sinopsis de la película
+     @NotBlank(message = "La sinopsis no puede estar vacía")
+     @Size(max = 500, message = "La sinopsis no debe tener más de 500 caracteres")
+     private String sinopsis;
 }
 
 /*

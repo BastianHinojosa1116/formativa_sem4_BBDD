@@ -60,6 +60,55 @@ public class PeliculaService {
                                 .orElseThrow(() -> new PeliculaNotFoundException(id)); // ✔ Aquí corregimos pasando el
                                                                                        // ID directamente
         }
+
+        /**
+         * Agrega una nueva película al repositorio.
+         * 
+         * @param pelicula Objeto Pelicula que se va a guardar.
+         * @return La película guardada (con ID si se genera automáticamente).
+         */
+        public Pelicula agregar(Pelicula pelicula) {
+                if (repo.existsById(pelicula.getId())) {
+                    // Si ya existe una película con ese ID, lanzamos una excepción
+                    throw new IllegalArgumentException("Ya existe una película con el ID " + pelicula.getId());
+                }
+            
+                // Si no existe, se guarda normalmente
+                return repo.save(pelicula);
+            }
+
+        /**
+         * Elimina una película por su ID.
+         * 
+         * @param id ID de la película a eliminar.
+         */
+        public void eliminar(Long id) {
+                if (!repo.existsById(id)) {
+                        throw new PeliculaNotFoundException(id);
+                }
+                repo.deleteById(id);
+        }
+
+        /**
+         * Actualiza una película existente.
+         * 
+         * @param id            ID de la película a actualizar.
+         * @param nuevaPelicula Datos nuevos de la película.
+         * @return La película actualizada.
+         */
+        public Pelicula actualizar(Long id, Pelicula nuevaPelicula) {
+                Pelicula existente = repo.findById(id)
+                                .orElseThrow(() -> new PeliculaNotFoundException(id));
+
+                // Actualizar campos
+                existente.setTitulo(nuevaPelicula.getTitulo());
+                existente.setAnnio(nuevaPelicula.getAnnio());
+                existente.setDirector(nuevaPelicula.getDirector());
+                existente.setGenero(nuevaPelicula.getGenero());
+                existente.setSinopsis(nuevaPelicula.getSinopsis());
+
+                return repo.save(existente);
+        }
 }
 
 /*

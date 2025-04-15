@@ -66,12 +66,57 @@ public class PeliculaController {
     @GetMapping("/{id}")
     public ResponseEntity<ResponseWrapper<Pelicula>> obtenerPorId(@PathVariable Long id) {
         Pelicula pelicula = peliculaService.obtenerPorId(id);
-    
+
         ResponseWrapper<Pelicula> respuesta = new ResponseWrapper<>(
                 "OK",
                 1,
                 List.of(pelicula));
-    
+
         return ResponseEntity.ok(respuesta);
     }
+
+    // --------------------- ENDPOINT 3 ----------------------
+
+    /**
+     * aGREGAR una película
+     * Si no la encuentra, lanza una excepción personalizada capturada por el
+     * GlobalExceptionHandler.
+     */
+    @PostMapping("/agregarPelicula")
+    public ResponseEntity<ResponseWrapper<Pelicula>> agregarPelicula(@RequestBody Pelicula pelicula) {
+        Pelicula nueva = peliculaService.agregar(pelicula);
+
+        ResponseWrapper<Pelicula> respuesta = new ResponseWrapper<>(
+                "CREATED",
+                1,
+                List.of(nueva));
+
+        return ResponseEntity.ok(respuesta);
+    }
+
+    @DeleteMapping("/eliminarPelicula/{id}")
+    public ResponseEntity<ResponseWrapper<String>> eliminarPelicula(@PathVariable Long id) {
+        peliculaService.eliminar(id);
+
+        ResponseWrapper<String> respuesta = new ResponseWrapper<>(
+                "Eliminado correctamente",
+                1,
+                List.of("Película con ID " + id + " eliminada."));
+
+        return ResponseEntity.ok(respuesta);
+    }
+
+    @PutMapping("/modificarPelicula/{id}")
+    public ResponseEntity<ResponseWrapper<Pelicula>> actualizarPelicula(@PathVariable Long id,
+            @RequestBody Pelicula pelicula) {
+        Pelicula actualizada = peliculaService.actualizar(id, pelicula);
+
+        ResponseWrapper<Pelicula> respuesta = new ResponseWrapper<>(
+                "Actualizado correctamente",
+                1,
+                List.of(actualizada));
+
+        return ResponseEntity.ok(respuesta);
+    }
+
 }
