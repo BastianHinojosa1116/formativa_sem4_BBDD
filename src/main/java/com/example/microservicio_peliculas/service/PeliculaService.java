@@ -12,8 +12,10 @@ import com.example.microservicio_peliculas.repository.PeliculaRepository;
 // Importamos la excepción personalizada
 import com.example.microservicio_peliculas.exception.PeliculaNotFoundException;
 
+import org.springframework.data.domain.Sort;
+
 // Importamos utilidades de Spring
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 // Importamos utilidades para listas
@@ -32,11 +34,15 @@ import java.util.List;
          // (Bean)
 public class PeliculaService {
 
+        private final PeliculaRepository peliculaRepository;
+
+        public PeliculaService(PeliculaRepository peliculaRepository) {
+                this.peliculaRepository = peliculaRepository;
+        }
+
         // -------------------- ATRIBUTOS -------------------------
 
-        // Inyección automática del repositorio que conecta con Oracle
-        @Autowired
-        private PeliculaRepository repo;
+   
 
         // -------------------- MÉTODOS -------------------------
 
@@ -46,8 +52,9 @@ public class PeliculaService {
          * @return Lista de películas obtenidas desde Oracle.
          */
         public List<Pelicula> obtenerTodas() {
-                return repo.findAll();
-        }
+                return peliculaRepository.findAll(Sort.by("id").ascending());
+            }
+            
 
         /**
          * Busca una película por su ID consultando en Oracle.
@@ -56,9 +63,33 @@ public class PeliculaService {
          * @return Película encontrada o lanza una excepción si no existe.
          */
         public Pelicula obtenerPorId(Long id) {
-                return repo.findById(id)
+                return peliculaRepository.findById(id)
                                 .orElseThrow(() -> new PeliculaNotFoundException(id)); // ✔ Aquí corregimos pasando el
                                                                                        // ID directamente
+        }
+
+        public Pelicula actualizar(Long id, Pelicula peliculaActualizada) {
+               
+
+                Pelicula existente = peliculaRepository.findById(id)
+                                .orElseThrow(() -> new PeliculaNotFoundException(id));
+
+                existente.setTitulo(peliculaActualizada.getTitulo());
+                existente.setAnnio(peliculaActualizada.getAnnio());
+                existente.setDirector(peliculaActualizada.getDirector());
+                existente.setGenero(peliculaActualizada.getGenero());
+                existente.setSinopsis(peliculaActualizada.getSinopsis());
+
+                return peliculaRepository.save(existente);
+        }
+
+        public void eliminar(Long id) {
+                
+
+                Pelicula existente = peliculaRepository.findById(id)
+                                .orElseThrow(() -> new PeliculaNotFoundException(id));
+
+                                peliculaRepository.delete(existente);
         }
 }
 
